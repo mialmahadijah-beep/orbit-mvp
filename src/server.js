@@ -415,4 +415,6 @@ app.post("/c/:code/lead", async (req, res) => {
 });
 
 // Start
-app.listen(PORT, () => console.log(`✅ Running: http://127.0.0.1:${PORT}`));
+app.listen(PORT, "0.0.0.0", () => {
+  console.log(`✅ Running on port ${PORT}`);
+});
