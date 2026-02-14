@@ -1,0 +1,152 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>Orbit Admin</title>
+</head>
+<body style="font-family: Arial; max-width: 1200px; margin: 40px auto;">
+
+<h1>Orbit Admin Dashboard</h1>
+<p><a href="/logout">Logout</a></p>
+
+<!-- Billing manual test -->
+<form method="POST" action="/admin/run-billing" style="margin-bottom:20px;">
+  <button type="submit">Run Billing Check Now (Test Auto-Pause/Reminders)</button>
+</form>
+
+<hr/>
+
+<!-- Add Client Manual -->
+<h2>Add Client (Manual)</h2>
+<form method="POST" action="/admin/clients/create" style="display:flex; gap:10px; flex-wrap:wrap; align-items:center;">
+  <input name="name" placeholder="Client Name" required style="padding:10px; flex:1; min-width:200px;" />
+  <input name="code" placeholder="Client Code (e.g. sofia1)" required style="padding:10px; width:220px;" />
+  <input name="email" placeholder="Client Email" required style="padding:10px; flex:1; min-width:220px;" />
+  <input name="bookingUrl" placeholder="Booking Link (optional)" style="padding:10px; flex:1; min-width:220px;" />
+  <button style="padding:10px 16px;">Add</button>
+</form>
+
+<p style="margin-top:10px;">
+  ✅ After you add a client, their lead form is: <b>/c/CLIENTCODE</b><br/>
+  Example: <code>http://127.0.0.1:3000/c/sofia1</code>
+</p>
+
+<hr/>
+
+<!-- Intake Requests -->
+<h2>Client Intake Requests (Clients submit here: /intake)</h2>
+<% if (intakes.length === 0) { %>
+  <p>No new intake requests.</p>
+<% } else { %>
+  <table border="1" cellpadding="10" cellspacing="0" style="width:100%;">
+    <tr>
+      <th>Business</th>
+      <th>Contact</th>
+      <th>Email</th>
+      <th>Booking</th>
+      <th>Action</th>
+    </tr>
+    <% intakes.forEach(i => { %>
+      <tr>
+        <td><%= i.businessName %></td>
+        <td><%= i.contactName %></td>
+        <td><%= i.email %></td>
+        <td><%= i.bookingUrl || "-" %></td>
+        <td>
+          <form method="POST" action="/admin/intakes/<%= i.id %>/approve">
+            <button type="submit">Approve → Create Client</button>
+          </form>
+        </td>
+      </tr>
+    <% }) %>
+  </table>
+<% } %>
+
+<hr/>
+
+<!-- Clients Table -->
+<h2>Clients</h2>
+<table border="1" cellpadding="10" cellspacing="0" style="width:100%;">
+  <tr>
+    <th>Name</th>
+    <th>Code</th>
+    <th>Email</th>
+    <th>Status</th>
+    <th>Days Left</th>
+    <th>Due Date</th>
+    <th>Lead Form</th>
+    <th>Booking Link</th>
+    <th>Actions</th>
+  </tr>
+
+  <% clients.forEach(c => { %>
+    <tr>
+      <td><%= c.name %></td>
+      <td><%= c.code %></td>
+      <td><%= c.email %></td>
+
+      <td>
+        <%= c.isPaused ? ("PAUSED (" + (c.pauseReason || "") + ")") : "ACTIVE" %>
+      </td>
+
+      <td><b><%= c.daysLeft %></b></td>
+
+      <td><%= new Date(c.nextDueDate).toISOString().slice(0,10) %></td>
+
+      <td>
+        <a href="/c/<%= c.code %>" target="_blank">Open Form</a>
+      </td>
+
+      <td>
+        <form method="POST" action="/admin/clients/<%= c.id %>/booking" style="display:flex; gap:6px; align-items:center;">
+          <input
+            name="bookingUrl"
+            value="<%= c.bookingUrl || "" %>"
+            placeholder="https://calendly.com/..."
+            style="padding:6px; width:260px;"
+          />
+          <button type="submit">Save</button>
+        </form>
+      </td>
+
+      <td>
+        <form method="POST" action="/admin/clients/<%= c.id %>/toggle" style="display:inline;">
+          <button type="submit"><%= c.isPaused ? "Unpause" : "Pause" %></button>
+        </form>
+
+        <form method="POST" action="/admin/clients/<%= c.id %>/paid" style="display:inline;">
+          <button type="submit">Mark Paid (Reset 30 Days)</button>
+        </form>
+      </td>
+    </tr>
+  <% }) %>
+</table>
+
+<hr/>
+
+<!-- Latest Leads -->
+<h2>Latest Leads</h2>
+<table border="1" cellpadding="10" cellspacing="0" style="width:100%;">
+  <tr>
+    <th>Client</th>
+    <th>Name</th>
+    <th>Email</th>
+    <th>Phone</th>
+    <th>Message</th>
+    <th>Date</th>
+  </tr>
+
+  <% leads.forEach(l => { %>
+    <tr>
+      <td><%= l.client.name %> (<%= l.client.code %>)</td>
+      <td><%= l.name %></td>
+      <td><%= l.email %></td>
+      <td><%= l.phone || "-" %></td>
+      <td><%= l.message || "-" %></td>
+      <td><%= l.createdAt.toISOString().slice(0,19).replace("T"," ") %></td>
+    </tr>
+  <% }) %>
+</table>
+
+</body>
+</html>

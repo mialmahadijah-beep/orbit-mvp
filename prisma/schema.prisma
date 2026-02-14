@@ -1,0 +1,73 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Client {
+  id         String  @id @default(cuid())
+  name       String
+  code       String  @unique
+  email      String
+  bookingUrl String?
+
+  isPaused    Boolean @default(false)
+  pauseReason String?
+
+  subscriptionStart DateTime  @default(now())
+  nextDueDate       DateTime
+  lastReminderAt    DateTime?
+
+  createdAt DateTime @default(now())
+
+  leads     Lead[]
+  followUps FollowUpTask[]
+}
+
+model Lead {
+  id String @id @default(cuid())
+
+  clientId String
+  client   Client @relation(fields: [clientId], references: [id])
+
+  name    String
+  email   String
+  phone   String?
+  message String?
+
+  createdAt DateTime @default(now())
+
+  followUps FollowUpTask[]
+}
+
+model ClientIntake {
+  id           String  @id @default(cuid())
+  businessName String
+  contactName  String
+  email        String
+  phone        String?
+  bookingUrl   String?
+  notes        String?
+
+  status    String   @default("new")
+  createdAt DateTime @default(now())
+}
+
+model FollowUpTask {
+  id String @id @default(cuid())
+
+  leadId String
+  lead   Lead   @relation(fields: [leadId], references: [id])
+
+  clientId String
+  client   Client @relation(fields: [clientId], references: [id])
+
+  sendAt DateTime
+  type   String
+  status String   @default("pending")
+
+  createdAt DateTime @default(now())
+}
