@@ -1,19 +1,15 @@
 <!doctype html>
 <html>
-<head>
-  <title>Thank You</title>
-</head>
-<body style="font-family:Arial; text-align:center; margin-top:80px;">
+<head><meta charset="utf-8" /><title>Thanks</title></head>
+<body>
+  <h2>✅ Thank you!</h2>
+  <p>We received your message for <b><%= client.name %></b>.</p>
 
-<h2>Thank you! ✅</h2>
-<p>Your request has been submitted successfully.</p>
-
-<% if (client.bookingUrl) { %>
-  <p>Please book a call here:</p>
-  <a href="<%= client.bookingUrl %>"><%= client.bookingUrl %></a>
-<% } else { %>
-  <p>The client will contact you soon.</p>
-<% } %>
-
+  <% if (client.bookingLink) { %>
+    <p>Book a call here:</p>
+    <p><a href="<%= client.bookingLink %>"><%= client.bookingLink %></a></p>
+  <% } else { %>
+    <p>The business will contact you soon.</p>
+  <% } %>
 </body>
 </html>

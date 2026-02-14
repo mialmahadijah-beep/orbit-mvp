@@ -1,29 +1,20 @@
 <!doctype html>
 <html>
-<head>
-  <title><%= client.name %> Lead Form</title>
-</head>
-<body style="font-family:Arial; max-width:600px; margin:50px auto;">
+<head><meta charset="utf-8" /><title><%= client.name %> — Lead Form</title></head>
+<body>
+  <h2><%= client.name %> — Lead Form</h2>
 
-<h2>Welcome to <%= client.name %></h2>
-
-<form method="POST" action="/lead">
-  <input type="hidden" name="clientCode" value="<%= client.code %>" />
-
-  <input name="name" placeholder="Your Name" required
-    style="width:100%; padding:10px; margin-bottom:10px;" />
-
-  <input name="email" placeholder="Your Email" required
-    style="width:100%; padding:10px; margin-bottom:10px;" />
-
-  <input name="phone" placeholder="Phone Number"
-    style="width:100%; padding:10px; margin-bottom:10px;" />
-
-  <textarea name="message" placeholder="Message"
-    style="width:100%; padding:10px; margin-bottom:10px;"></textarea>
-
-  <button style="padding:10px 20px;">Submit Lead</button>
-</form>
-
+  <% if (paused) { %>
+    <p style="color:red;"><b>This client is currently paused.</b></p>
+    <p>Please try again later.</p>
+  <% } else { %>
+    <form method="post" action="/c/<%= client.code %>/lead">
+      <input name="name" placeholder="Your Name" required /><br/><br/>
+      <input name="email" placeholder="Your Email" required /><br/><br/>
+      <input name="phone" placeholder="Phone (optional)" /><br/><br/>
+      <textarea name="message" placeholder="Message (optional)"></textarea><br/><br/>
+      <button type="submit">Send</button>
+    </form>
+  <% } %>
 </body>
 </html>

@@ -1,23 +1,19 @@
 <!doctype html>
 <html>
 <head><meta charset="utf-8" /><title>Client Setup Form</title></head>
-<body style="font-family: Arial; max-width: 700px; margin: 40px auto;">
-<h2>Client Setup Form</h2>
-<p>Fill this form so we can activate your Orbit system.</p>
-<form method="POST" action="/intake">
-  <label>Business Name</label><br/>
-  <input name="businessName" required style="width:100%; padding:10px;" /><br/><br/>
-  <label>Contact Name</label><br/>
-  <input name="contactName" required style="width:100%; padding:10px;" /><br/><br/>
-  <label>Email</label><br/>
-  <input name="email" type="email" required style="width:100%; padding:10px;" /><br/><br/>
-  <label>Phone</label><br/>
-  <input name="phone" style="width:100%; padding:10px;" /><br/><br/>
-  <label>Booking Link</label><br/>
-  <input name="bookingUrl" style="width:100%; padding:10px;" /><br/><br/>
-  <label>Notes</label><br/>
-  <textarea name="notes" style="width:100%; padding:10px; height:120px;"></textarea><br/><br/>
-  <button style="padding:12px 18px;">Submit</button>
-</form>
+<body>
+  <h1>Client Setup Form</h1>
+
+  <% if (ok) { %>
+    <p>✅ Submitted. We will review and activate you shortly.</p>
+  <% } %>
+
+  <form method="post" action="/intake">
+    <input name="business" placeholder="Business Name" required /><br/><br/>
+    <input name="contact" placeholder="Your Name" required /><br/><br/>
+    <input name="email" placeholder="Email" required /><br/><br/>
+    <input name="bookingLink" placeholder="Booking Link (Calendly etc) - optional" /><br/><br/>
+    <button type="submit">Submit</button>
+  </form>
 </body>
 </html>

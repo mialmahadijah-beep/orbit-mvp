@@ -8,66 +8,41 @@ datasource db {
 }
 
 model Client {
-  id         String  @id @default(cuid())
-  name       String
-  code       String  @unique
-  email      String
-  bookingUrl String?
+  id              String   @id @default(cuid())
+  name            String
+  code            String   @unique
+  email           String
+  bookingLink     String?  // client calendar link
+  status          String   @default("PENDING") // PENDING | ACTIVE | PAUSED
+  startedAt       DateTime?
+  dueAt           DateTime?
+  pausedAt        DateTime?
+  pauseReason     String?
+  lastReminderAt  DateTime?
 
-  isPaused    Boolean @default(false)
-  pauseReason String?
+  createdAt       DateTime @default(now())
 
-  subscriptionStart DateTime  @default(now())
-  nextDueDate       DateTime
-  lastReminderAt    DateTime?
-
-  createdAt DateTime @default(now())
-
-  leads     Lead[]
-  followUps FollowUpTask[]
+  leads           Lead[]
 }
 
 model Lead {
-  id String @id @default(cuid())
-
-  clientId String
-  client   Client @relation(fields: [clientId], references: [id])
-
-  name    String
-  email   String
-  phone   String?
-  message String?
-
+  id        String   @id @default(cuid())
+  clientId  String
+  name      String
+  email     String
+  phone     String?
+  message   String?
   createdAt DateTime @default(now())
 
-  followUps FollowUpTask[]
+  client    Client   @relation(fields: [clientId], references: [id])
 }
 
-model ClientIntake {
-  id           String  @id @default(cuid())
-  businessName String
-  contactName  String
-  email        String
-  phone        String?
-  bookingUrl   String?
-  notes        String?
-
-  status    String   @default("new")
-  createdAt DateTime @default(now())
-}
-
-model FollowUpTask {
-  id String @id @default(cuid())
-
-  leadId String
-  lead   Lead   @relation(fields: [leadId], references: [id])
-
-  clientId String
-  client   Client @relation(fields: [clientId], references: [id])
-
-  sendAt DateTime
-  type   String
-  status String   @default("pending")
-
-  createdAt DateTime @default(now())
+model IntakeRequest {
+  id          String   @id @default(cuid())
+  business    String
+  contact     String
+  email       String
+  bookingLink String?
+  status      String   @default("NEW") // NEW | APPROVED | REJECTED
+  createdAt   DateTime @default(now())
 }
